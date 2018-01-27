@@ -52,7 +52,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 return
             g_id += 1
             this_id = g_id
-            g_connects[str(this_id)] = {'conn': conn_to_target}
+            g_connects[str(this_id)] = {'conn': conn_to_target, 'addr': self.client_address}
             data = 'hello %d' % this_id
             self.set_header(200, len(data))
             self.wfile.write(data)
@@ -63,13 +63,13 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             try:
                 data = g_connects[id_str]['conn'].recv(RDBUFSZ)
             except Exception, ex1:
-                logger.debug("read from target fail")
+                logger.debug("\t%s read from target fail" % id_str)
             try:
                 if data:
                     data = crypt_string(data)
                     self.set_header(200, len(data))
                     self.wfile.write(data)
-                    logger.debug("%s fetch [%d]" % (id_str, len(data)))
+                    logger.debug("\t%s %s fetch [%d]" % (id_str, self.client_address, len(data)))
                 else:
                     self.set_header(200, 0)
                 self.wfile.flush()
@@ -104,7 +104,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if data:
                 self.wfile.write(data)
         elif self.path == "/":
-            data = "test success 13"
+            data = "test success 14"
             self.set_header(200, len(data))
             self.wfile.write(data)
         else:
@@ -116,7 +116,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             content_len = int(self.headers.getheader('content-length', 0))
             if content_len > 0:
                 content = self.rfile.read(content_len)
-                logger.info(id_str + " post [%d/%d]" % (content_len, len(content)))
+                logger.info("\t%s %s post [%d/%d]" % (id_str, self.client_address, content_len, len(content)))
                 g_connects[id_str]['conn'].sendall(crypt_string(content, False))
             else:
                 logger.info(id_str + " post [0]?")
