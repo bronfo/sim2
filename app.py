@@ -28,14 +28,14 @@ def crypt_string(data, encode=True, key='bjisa8g9kx7d8sskdg898d_xvc87d*84@*&x'):
     return xored
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    protocol_version = 'HTTP/1.1'
+    #protocol_version = 'HTTP/1.1'
     # todo id -- peer ip:port
     def log_message(self, format, *args):
         return
     
     def set_header(self, status, len):
         self.send_response(status)
-        self.send_header("Connection", "keep-alive")
+        #self.send_header("Connection", "keep-alive")
         self.send_header("Content-Length", str(len))
         self.end_headers()
     
@@ -104,7 +104,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if data:
                 self.wfile.write(data)
         elif self.path == "/":
-            data = "test success 14"
+            data = "test success 15"
             self.set_header(200, len(data))
             self.wfile.write(data)
         else:
