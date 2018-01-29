@@ -11,7 +11,10 @@ except ImportError:
     from BaseHTTPServer import BaseHTTPRequestHandler
     from BaseHTTPServer import HTTPServer
 import socket
-from urlparse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 import httplib
 import os
 import logging
