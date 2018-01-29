@@ -4,7 +4,12 @@ try:
     from socketserver import ThreadingMixIn
 except ImportError:
     from SocketServer import ThreadingMixIn
-import BaseHTTPServer
+try:
+    from http.server import BaseHTTPRequestHandler
+    from http.server import HTTPServer
+except ImportError:
+    from BaseHTTPServer import BaseHTTPRequestHandler
+    from BaseHTTPServer import HTTPServer
 import socket
 from urlparse import urlparse
 import httplib
@@ -30,7 +35,7 @@ def crypt_string(data, encode=True, key='bjisa8g9kx7d8sskdg898d_xvc87d*84@*&x'):
         return base64.encodestring(xored).strip()
     return xored
 
-class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class MyHandler(BaseHTTPRequestHandler):
     #protocol_version = 'HTTP/1.1'
     # todo id -- peer ip:port
     # todo clean g_connects, and make threading-safety
@@ -134,8 +139,7 @@ Handler = MyHandler
 logging.basicConfig(format='%(asctime)s %(filename)s %(lineno)s: %(message)s')
 logger.setLevel(logging.DEBUG)
 
-class MyHTTPServer(ThreadingMixIn,
-  BaseHTTPServer.HTTPServer):
+class MyHTTPServer(ThreadingMixIn, HTTPServer):
     pass
 
 httpd = MyHTTPServer(("", PORT), Handler)
