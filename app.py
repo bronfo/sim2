@@ -15,7 +15,10 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
-import httplib
+try:
+    from http.client import HTTPConnection
+except ImportError:
+    from httplib import HTTPConnection
 import os
 import logging
 
@@ -97,7 +100,7 @@ class MyHandler(BaseHTTPRequestHandler):
             else:
                 host = addr[0]
                 port = 80
-            conn = httplib.HTTPConnection(host, int(port))
+            conn = HTTPConnection(host, int(port))
             conn.request("GET", p.path + "?" + p.query)
             resp = conn.getresponse()
             data = resp.read()
