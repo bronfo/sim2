@@ -1,6 +1,9 @@
 #coding:utf-8
 #import SimpleHTTPServer
-import socketserver
+try:
+    from socketserver import ThreadingMixIn
+except ImportError:
+    from SocketServer import ThreadingMixIn
 import BaseHTTPServer
 import socket
 from urlparse import urlparse
@@ -131,7 +134,7 @@ Handler = MyHandler
 logging.basicConfig(format='%(asctime)s %(filename)s %(lineno)s: %(message)s')
 logger.setLevel(logging.DEBUG)
 
-class MyHTTPServer(socketserver.ThreadingMixIn,
+class MyHTTPServer(ThreadingMixIn,
   BaseHTTPServer.HTTPServer):
     pass
 
