@@ -30,6 +30,7 @@ def crypt_string(data, encode=True, key='bjisa8g9kx7d8sskdg898d_xvc87d*84@*&x'):
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     #protocol_version = 'HTTP/1.1'
     # todo id -- peer ip:port
+    # todo clean g_connects, and make threading-safety
     def log_message(self, format, *args):
         return
     
@@ -46,7 +47,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             try:
                 host, port = crypt_string(self.path[9:], False).split(":")
                 conn_to_target = socket.create_connection((host, int(port)))
-            except Exception, ex:
+            except Exception as ex:
                 self.send_response(503)
                 self.end_headers()
                 return
@@ -62,7 +63,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             data = ""
             try:
                 data = g_connects[id_str]['conn'].recv(RDBUFSZ)
-            except Exception, ex1:
+            except Exception as ex1:
                 logger.debug("\t%s read from target fail" % id_str)
             try:
                 if data:
@@ -73,7 +74,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 else:
                     self.set_header(200, 0)
                 self.wfile.flush()
-            except Exception, ex2:
+            except Exception as ex2:
                 self.wfile._wbuf = [] # make finish() happy to flush it
                 logger.debug("write to client fail, clean it")
         elif self.path.startswith("/get/"):
